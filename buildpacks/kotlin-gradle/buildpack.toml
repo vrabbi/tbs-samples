@@ -1,0 +1,20 @@
+# Buildpack API version
+api = "0.2"
+
+# Buildpack ID and metadata
+[buildpack]
+id = "samples/kotlin-gradle"
+version = "0.0.1"
+name = "Sample Kotlin Gradle Buildpack"
+homepage = "https://github.com/buildpacks/samples/tree/main/buildpacks/kotlin-gradle"
+
+# Stacks that the buildpack will work with
+[[stacks]]
+id = "io.buildpacks.samples.stacks.bionic"
+
+[[stacks]]
+id = "io.buildpacks.samples.stacks.alpine"
+
+[[stacks]]
+id = "io.buildpacks.stacks.bionic"
+mixins = ["build:set=shell-utils"]
