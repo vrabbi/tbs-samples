@@ -1,4 +1,4 @@
-# Tanzu Build Service Samples Repo
+## Tanzu Build Service Samples Repo
 This repository contains sample implementations of the core components of the [Cloud Native Buildpacks](https://buildpacks.io/) (CNB) project for learning and testing purposes.
 
 Includes:
