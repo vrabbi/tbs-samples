@@ -3,17 +3,83 @@
 kp image create asp-dotnet-demo --tag harbor.terasky.demo/tbs-demo-images/asp-dotnet-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/asp-dotnet/
 kp image create dotnet-core-demo --tag harbor.terasky.demo/tbs-demo-images/dotnet-core-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/dotnet-core
 kp image create go-demo --tag harbor.terasky.demo/tbs-demo-images/go-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/go
-kp image create java-gradle-demo --tag harbor.terasky.demo/tbs-demo-images/java-gradle-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/java-gradle
-kp image create java-mvn-demo --tag harbor.terasky.demo/tbs-demo-images/java-mvn-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/java-mvn
 kp image create java-springboot-gradle-demo --tag harbor.terasky.demo/tbs-demo-images/java-springboot-gradle-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/java-springboot-gradle
-kp image create nginx-demo --tag harbor.terasky.demo/tbs-demo-images/nginx-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/nginx
 kp image create node-demo --tag harbor.terasky.demo/tbs-demo-images/node-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/node
 kp image create node-tsc-demo --tag harbor.terasky.demo/tbs-demo-images/node-tsc-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/node-tsc
 kp image create node-yarn-demo --tag harbor.terasky.demo/tbs-demo-images/node-yarn-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/node-yarn
 kp image create procfile-demo --tag harbor.terasky.demo/tbs-demo-images/procfile-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/procfile
 kp image create python-demo --tag harbor.terasky.demo/tbs-demo-images/python-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/python
-kp image create php-composer-demo --cluster-builder full --tag harbor.terasky.demo/tbs-demo-images/php-composer-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/php-composer
-kp image create php-webserver-demo --cluster-builder full --tag harbor.terasky.demo/tbs-demo-images/php-webserver-demo --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/php-webserver
+```
+
+# Deploy all images
+
+1. Create a bash file with the following contents and run it
+``` bash
+kubectl get image --no-headers -o custom-columns=":status.latestImage" > /tmp/imageRefs.txt
+mkdir -p ./k8s-manifests
+
+while read img
+do
+  name=`echo $img | cut -d '/' -f 3 | cut -d '@' -f 1`
+  cat << EOF > ./k8s-manifests/$name.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: $name
+  name: $name
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $name
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: $name
+    spec:
+      containers:
+      - image: $img
+        name: $name
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: $name
+  name: $name
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: $name
+  type: LoadBalancer
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: $name
+spec:
+  virtualhost:
+    fqdn: $name.terasky.demo
+  routes:
+    - conditions:
+      - prefix: /
+      services:
+        - name: $name
+          port: 80
+EOF
+done < /tmp/imageRefs.txt
+```
+2. run the following command
+```bash
+kubectl apply -f ./k8s-manifests/
 ```
 
 # Delete All Images
@@ -21,15 +87,10 @@ kp image create php-webserver-demo --cluster-builder full --tag harbor.terasky.d
 kp image delete asp-dotnet-demo
 kp image delete dotnet-core-demo
 kp image delete go-demo
-kp image delete java-gradle-demo
-kp image delete java-mvn-demo
 kp image delete java-springboot-gradle-demo
-kp image delete nginx-demo
 kp image delete node-demo
 kp image delete node-tsc-demo
 kp image delete node-yarn-demo
-kp image delete php-composer-demo
-kp image delete php-webserver-demo
 kp image delete procfile-demo
 kp image delete python-demo
 ```
