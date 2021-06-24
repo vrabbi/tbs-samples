@@ -9,7 +9,7 @@ Includes:
 1. Go into the apps directory to view the different language examples
 
 ### Creating an Image:
-1. clone this repo:
+1. Clone this repo:
 ```bash
 git clone https://github.com/vrabbi/tbs-samples.git
 ```
@@ -19,7 +19,7 @@ git clone https://github.com/vrabbi/tbs-samples.git
 cd samples/apps/<EXAMPLE_FOLDER>
 ```
 
-3. run the following command:
+3. Run the following command to create an image:
 ``` bash
 # for procfile, java, node, dotnet, go nginx and python use the following command as is
 # for php you must add "--cluster-builder full" as the php buildpack is not in the default cluster builder
