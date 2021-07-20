@@ -21,7 +21,5 @@ cd samples/apps/<EXAMPLE_FOLDER>
 
 3. Run the following command to create an image:
 ``` bash
-# for procfile, java, node, dotnet, go nginx and python use the following command as is
-# for php you must add "--cluster-builder full" as the php buildpack is not in the default cluster builder
 kp image create <IMAGE_NAME> --tag <CONFIGURED_IMAGE_REPO>/<IMAGE_NAME> --git https://github.com/vrabbi/tbs-samples --git-revision master --sub-path ./apps/<EXAMPLE_FOLDER>/ --wait
 ```
