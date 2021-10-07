@@ -38,7 +38,7 @@ namespace aspnet
     <title>Powered By Paketo Buildpacks</title>
   </head>
   <body>
-    <img style=""display: block; margin-left: auto; margin-right: auto; width: 50%;"" src=""https://www.terasky.com/wp-content/uploads/2021/05/TeraSkay-Logo-new-01.png""></img>
+    <img style=""display: block; margin-left: auto; margin-right: auto; width: 50%;"" src=""https://www.terasky.com/wp-content/uploads/2021/07/logo.svg""></img>
   </body>
 </html>");
                 });
